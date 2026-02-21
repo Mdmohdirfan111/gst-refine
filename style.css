@@ -1,82 +1,158 @@
-body{
-    font-family: 'Segoe UI', sans-serif;
-    margin:0;
-    background: linear-gradient(135deg,#1e3c72,#2a5298);
-    color:#333;
+* {
+    box-sizing: border-box;
 }
 
-.header{
-    text-align:center;
-    padding:20px;
-    color:white;
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #e0e0e0;
 }
 
-.controls{
-    text-align:center;
-    padding:15px;
+.header {
+    background: linear-gradient(to right, #1e3c72, #2a5298);
+    text-align: center;
+    padding: 2.2rem 1rem;
+    color: white;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.4);
 }
 
-button{
-    padding:10px 15px;
-    margin:5px;
-    border:none;
-    background:#00c853;
-    color:white;
-    font-weight:bold;
-    border-radius:6px;
-    cursor:pointer;
-    transition:0.3s;
+.header h1 {
+    margin: 0;
+    font-size: 2.6rem;
+    letter-spacing: 1px;
 }
 
-button:hover{
-    background:#00a844;
+.header p {
+    margin: 8px 0 0;
+    opacity: 0.9;
+    font-size: 1.1rem;
 }
 
-input[type="file"]{
-    padding:8px;
-    background:white;
-    border-radius:6px;
+.controls {
+    padding: 1.5rem;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 20px;
 }
 
-.table-container{
-    padding:15px;
-    overflow:auto;
+button, .file-label {
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
-table{
-    width:100%;
-    border-collapse:collapse;
-    background:white;
-    border-radius:8px;
-    overflow:hidden;
+button {
+    background: #28a745;
+    color: white;
 }
 
-th,td{
-    border:1px solid #ddd;
-    padding:6px;
-    font-size:12px;
+button:hover {
+    background: #218838;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.35);
 }
 
-th{
-    background:#2a5298;
-    color:white;
-    position:sticky;
-    top:0;
+button:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-td input{
-    width:100%;
-    border:none;
-    outline:none;
+.export-btn.csv { background: #007bff; }
+.export-btn.csv:hover { background: #0069d9; }
+.export-btn.json { background: #6f42c1; }
+.export-btn.json:hover { background: #5a32a3; }
+
+.file-label {
+    background: #ffc107;
+    color: #1a1a1a;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
 }
 
-.invalid{
-    background:#ffcccc;
+.file-label:hover {
+    background: #e0a800;
+    transform: translateY(-3px);
 }
 
-footer{
-    text-align:center;
-    padding:15px;
-    color:white;
-    font-weight:bold;
+.file-label input {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.table-container {
+    padding: 0 1.5rem 2rem;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255,255,255,0.94);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+}
+
+th, td {
+    padding: 10px 8px;
+    font-size: 13px;
+    border: 1px solid #d0d0d0;
+    text-align: left;
+}
+
+th {
+    background: #1e3c72;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-weight: 600;
+}
+
+td input {
+    width: 100%;
+    padding: 6px 8px;
+    border: none;
+    outline: none;
+    font-family: inherit;
+    font-size: inherit;
+    background: transparent;
+}
+
+tr.invalid {
+    background: #ffebee !important;
+    color: #c62828;
+}
+
+tr.invalid input {
+    color: #c62828;
+}
+
+.status-bar {
+    text-align: center;
+    padding: 12px;
+    background: rgba(0,0,0,0.2);
+    color: #ddd;
+    font-size: 0.95rem;
+}
+
+footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: #aaa;
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
 }
