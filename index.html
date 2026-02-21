@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>GST Refine Tool</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>GST Refine Tool 2025</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -10,14 +11,18 @@
 
 <div class="header">
     <h1>GST Refine Tool</h1>
-    <p>Upload • Validate • Refine • Export</p>
+    <p>Upload Excel • Auto-Validate • Manual Edit • Export GSTR-1 JSON / CSV</p>
 </div>
 
 <div class="controls">
-    <input type="file" id="fileInput">
-    <button onclick="addRow()">Add Row</button>
-    <button onclick="downloadCSV()">Download CSV</button>
-    <button onclick="downloadJSON()">Download JSON</button>
+    <label class="file-label">
+        Upload GST Template
+        <input type="file" id="fileInput" accept=".xlsx,.xls">
+    </label>
+    
+    <button onclick="addRow()">+ Add New Row</button>
+    <button class="export-btn csv" onclick="downloadCSV()">Download CSV</button>
+    <button class="export-btn json" onclick="downloadGSTR1JSON()">Download GSTR-1 JSON</button>
 </div>
 
 <div class="table-container">
@@ -29,7 +34,14 @@
     </table>
 </div>
 
-<footer>Built by Mohd Irfan</footer>
+<div class="status-bar">
+    <span id="rowCount">0 rows</span>
+    <span> | Invalid rows will be highlighted in red</span>
+</div>
+
+<footer>
+    Built with ❤️ by Mohd Irfan • Hyderabad
+</footer>
 
 <script src="script.js"></script>
 </body>
