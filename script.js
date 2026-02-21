@@ -1,219 +1,139 @@
-// Headers (as per your original + common GSTR-1 B2B fields)
 const headers = [
-    "GSTIN/UIN of Recipient",
-    "Receiver Name",
-    "Invoice Number",
-    "Invoice date",
-    "Invoice Value",
-    "Place Of Supply",
-    "Reverse Charge",
-    "Applicable % of Tax Rate",
-    "Invoice Type",
-    "E-Commerce GSTIN",
-    "Rate",
-    "Taxable Value",
-    "Cess Amount"
+    "GSTIN/UIN of Recipient", "Receiver Name", "Invoice Number", "Invoice date",
+    "Invoice Value", "Place Of Supply", "Reverse Charge", "Applicable % of Tax Rate",
+    "Invoice Type", "E-Commerce GSTIN", "Rate", "Taxable Value", "Cess Amount"
 ];
 
-// Valid state codes 01–38 (including Ladakh)
-const validStateCodes = Array.from({length: 38}, (_, i) => String(i+1).padStart(2,'0'));
-
 const stateMap = {
-    "01":"Jammu & Kashmir", "02":"Himachal Pradesh", "03":"Punjab", "04":"Chandigarh",
-    "05":"Uttarakhand", "06":"Haryana", "07":"Delhi", "08":"Rajasthan",
-    "09":"Uttar Pradesh", "10":"Bihar", "11":"Sikkim", "12":"Arunachal Pradesh",
-    "13":"Nagaland", "14":"Manipur", "15":"Mizoram", "16":"Tripura",
-    "17":"Meghalaya", "18":"Assam", "19":"West Bengal", "20":"Jharkhand",
-    "21":"Odisha", "22":"Chhattisgarh", "23":"Madhya Pradesh", "24":"Gujarat",
-    "25":"Daman & Diu", "26":"Dadra & Nagar Haveli", "27":"Maharashtra",
-    "28":"Andhra Pradesh (Old)", "29":"Karnataka", "30":"Goa", "31":"Lakshadweep",
-    "32":"Kerala", "33":"Tamil Nadu", "34":"Puducherry", "35":"Andaman & Nicobar Islands",
-    "36":"Telangana", "37":"Andhra Pradesh", "38":"Ladakh"
+    "01":"Jammu & Kashmir","02":"Himachal Pradesh","03":"Punjab","04":"Chandigarh","05":"Uttarakhand","06":"Haryana","07":"Delhi","08":"Rajasthan","09":"Uttar Pradesh","10":"Bihar","11":"Sikkim","12":"Arunachal Pradesh","13":"Nagaland","14":"Manipur","15":"Mizoram","16":"Tripura","17":"Meghalaya","18":"Assam","19":"West Bengal","20":"Jharkhand","21":"Odisha","22":"Chhattisgarh","23":"Madhya Pradesh","24":"Gujarat","25":"Daman & Diu","26":"Dadra & Nagar Haveli","27":"Maharashtra","28":"Andhra Pradesh (Old)","29":"Karnataka","30":"Goa","31":"Lakshadweep","32":"Kerala","33":"Tamil Nadu","34":"Puducherry","35":"Andaman & Nicobar Islands","36":"Telangana","37":"Andhra Pradesh","38":"Ladakh"
 };
 
-// Render headers
-document.getElementById("headerRow").innerHTML = headers.map(h => `<th>${h}</th>`).join('');
+// Render Header
+const headerRow = document.getElementById("headerRow");
+headers.forEach(h => {
+    let th = document.createElement("th");
+    th.innerText = h;
+    headerRow.appendChild(th);
+});
+let actionTh = document.createElement("th");
+actionTh.innerText = "Action";
+headerRow.appendChild(actionTh);
 
-// Add row function
-function addRow(data = Array(headers.length).fill("")) {
+function addRow(data = []) {
     const tbody = document.querySelector("#gstTable tbody");
-    const tr = document.createElement("tr");
+    let tr = document.createElement("tr");
 
-    headers.forEach((_, i) => {
-        const td = document.createElement("td");
-        const input = document.createElement("input");
+    headers.forEach((h, i) => {
+        let td = document.createElement("td");
+        let input = document.createElement("input");
         input.value = data[i] || "";
-        input.oninput = () => validateAndUpdate(tr);
+        input.addEventListener('input', () => validateRow(tr));
+        // Blur event for auto-formatting date when user finishes typing
+        if(i === 3) input.addEventListener('blur', () => validateRow(tr));
         td.appendChild(input);
         tr.appendChild(td);
     });
 
-    // Force "Regular" for Invoice Type (most common in GSTR-1 B2B)
-    tr.cells[8].querySelector("input").value = "Regular";
+    let actionTd = document.createElement("td");
+    actionTd.innerHTML = `<button class="btn-delete" onclick="this.closest('tr').remove()"><i class="fas fa-trash"></i></button>`;
+    tr.appendChild(actionTd);
 
     tbody.appendChild(tr);
-    validateAndUpdate(tr);
-    updateRowCount();
+    if(!data[8]) tr.cells[8].querySelector('input').value = "Regular";
+    validateRow(tr);
 }
 
-// Check if row is completely empty
-function isEmptyRow(data) {
-    return data.every(v => !v || String(v).trim() === "");
+// Date Formatting Logic
+function formatDateValue(val) {
+    if(!val) return val;
+    // Replace dots or dashes with slashes
+    let clean = val.replace(/[.\-]/g, '/');
+    let parts = clean.split('/');
+    
+    if(parts.length === 3) {
+        let d = parts[0].padStart(2, '0');
+        let m = parts[1].padStart(2, '0');
+        let y = parts[2];
+        if(y.length === 2) y = "20" + y; // handle 26/01/26 -> 26/01/2026
+        return `${d}/${m}/${y}`;
+    }
+    return val;
 }
 
-// Main validation
-function validateAndUpdate(row) {
-    const inputs = row.querySelectorAll("input");
-    const gst = inputs[0].value.trim().toUpperCase();
-    const pos = inputs[5].value.trim();
-    const dateInput = inputs[3];
+function validateRow(row) {
+    let gstInput = row.cells[0].querySelector('input');
+    let dateInput = row.cells[3].querySelector('input');
+    
+    let gst = gstInput.value.trim().toUpperCase();
+    let date = dateInput.value.trim();
 
-    let invalid = false;
+    // Apply Date Formatting
+    if(date) {
+        dateInput.value = formatDateValue(date);
+    }
 
-    // GSTIN validation - 15 chars + starts with 01-38
-    if (gst.length === 15) {
-        const stateCode = gst.substring(0,2);
-        if (validStateCodes.includes(stateCode)) {
-            // Auto-fill Place of Supply if empty or mismatched
-            if (!pos || pos.startsWith(stateCode)) {
-                inputs[5].value = `${stateCode}-${stateMap[stateCode] || "Unknown"}`;
-            }
+    row.classList.remove("row-invalid");
+
+    // GST & State Validation
+    if (gst.length > 0) {
+        let stateCode = parseInt(gst.substring(0, 2));
+        if (isNaN(stateCode) || stateCode < 1 || stateCode > 38 || gst.length !== 15) {
+            row.classList.add("row-invalid");
         } else {
-            invalid = true;
-        }
-    } else if (gst !== "") {
-        invalid = true;
-    }
-
-    // Strict state code check in POS (if manually edited)
-    if (pos) {
-        const codeMatch = pos.match(/^(\d{2})/);
-        if (codeMatch && !validStateCodes.includes(codeMatch[1])) {
-            invalid = true;
-        }
-    }
-
-    // Date formatting (DD-MM-YYYY)
-    let dateVal = dateInput.value.trim();
-    if (dateVal) {
-        dateVal = dateVal.replace(/[-.\/]/g, '/');
-        const parts = dateVal.split('/');
-        if (parts.length === 3) {
-            let [d,m,y] = parts;
-            if (y.length === 2) y = '20' + y;
-            d = d.padStart(2,'0');
-            m = m.padStart(2,'0');
-            dateInput.value = `${d}-${m}-${y}`;
-        }
-    }
-
-    // Force Regular
-    inputs[8].value = "Regular";
-
-    row.classList.toggle("invalid", invalid);
-    updateRowCount();
-}
-
-function updateRowCount() {
-    const count = document.querySelectorAll("#gstTable tbody tr").length;
-    document.getElementById("rowCount").textContent = `${count} rows`;
-}
-
-// File upload
-document.getElementById("fileInput").addEventListener("change", e => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = evt => {
-        try {
-            const data = new Uint8Array(evt.target.result);
-            const wb = XLSX.read(data, {type: 'array'});
-            const ws = wb.Sheets[wb.SheetNames[0]];
-            const json = XLSX.utils.sheet_to_json(ws, {header: 1, blankrows: false});
-
-            if (JSON.stringify(json[0]) !== JSON.stringify(headers)) {
-                alert("Header row doesn't match expected GST template!\nPlease use correct format.");
-                return;
+            let codeStr = gst.substring(0, 2);
+            if (stateMap[codeStr]) {
+                row.cells[5].querySelector('input').value = codeStr + "-" + stateMap[codeStr];
             }
-
-            json.slice(1).forEach(row => {
-                if (!isEmptyRow(row)) {
-                    addRow(row);
-                }
-            });
-        } catch(err) {
-            alert("Error reading file: " + err.message);
         }
-    };
-    reader.readAsArrayBuffer(file);
-});
+    }
+    row.cells[8].querySelector('input').value = "Regular";
+}
 
-// CSV Export
+// GSTR-1 JSON Download
+function downloadJSON() {
+    let b2bData = {};
+    document.querySelectorAll("#gstTable tbody tr").forEach(tr => {
+        const ins = tr.querySelectorAll("input");
+        let gstin = ins[0].value, invNo = ins[2].value;
+        if(!gstin || !invNo) return;
+
+        if (!b2bData[gstin]) b2bData[gstin] = { ctin: gstin, inv: [] };
+
+        b2bData[gstin].inv.push({
+            inum: invNo, 
+            idt: ins[3].value, // This will be in DD/MM/YYYY
+            val: parseFloat(ins[4].value) || 0,
+            pos: ins[5].value.substring(0,2), 
+            rchrg: ins[6].value || "N", 
+            inv_typ: "R",
+            itms: [{ num: 1, itm_det: { rt: parseFloat(ins[10].value) || 0, txval: parseFloat(ins[11].value) || 0, csamt: parseFloat(ins[12].value) || 0 } }]
+        });
+    });
+    saveFile(JSON.stringify({ b2b: Object.values(b2bData) }, null, 2), "gstr1_export.json", "application/json");
+}
+
 function downloadCSV() {
-    const rows = [headers];
+    let rows = [headers];
     document.querySelectorAll("#gstTable tbody tr").forEach(tr => {
-        const row = Array.from(tr.querySelectorAll("input")).map(i => i.value);
-        rows.push(row);
+        rows.push(Array.from(tr.querySelectorAll("input")).map(i => i.value));
     });
-
-    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
-    const blob = new Blob([csv], {type: "text/csv;charset=utf-8;"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "GST_Data_" + new Date().toISOString().slice(0,10) + ".csv";
-    a.click();
-    URL.revokeObjectURL(url);
+    saveFile(rows.map(e => e.join(",")).join("\n"), "gst_data.csv", "text/csv");
 }
 
-// GSTR-1 JSON Export (B2B section like format)
-function downloadGSTR1JSON() {
-    const data = [];
-
-    document.querySelectorAll("#gstTable tbody tr").forEach(tr => {
-        const inputs = tr.querySelectorAll("input");
-        const obj = {};
-
-        headers.forEach((key, i) => {
-            let val = inputs[i].value.trim();
-            if (key === "Invoice date" && val) {
-                // GSTR-1 usually expects DD-MM-YYYY
-                obj[key] = val;
-            } else if (["Invoice Value", "Rate", "Taxable Value", "Cess Amount"].includes(key)) {
-                obj[key] = val ? Number(val) : 0;
-            } else {
-                obj[key] = val;
-            }
-        });
-
-        // Minimal GSTR-1 B2B like structure
-        data.push({
-            gstin: obj["GSTIN/UIN of Recipient"],
-            receiver_name: obj["Receiver Name"],
-            invoice_no: obj["Invoice Number"],
-            invoice_date: obj["Invoice date"],
-            invoice_value: obj["Invoice Value"],
-            place_of_supply: obj["Place Of Supply"],
-            reverse_charge: obj["Reverse Charge"] || "N",
-            tax_rate_percentage: obj["Applicable % of Tax Rate"],
-            invoice_type: obj["Invoice Type"],
-            ecom_gstin: obj["E-Commerce GSTIN"],
-            rate: obj["Rate"],
-            taxable_value: obj["Taxable Value"],
-            cess_amount: obj["Cess Amount"]
-        });
-    });
-
-    const jsonStr = JSON.stringify({ b2b: data }, null, 2);
-    const blob = new Blob([jsonStr], {type: "application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "GSTR1_B2B_" + new Date().toISOString().slice(0,10) + ".json";
-    a.click();
-    URL.revokeObjectURL(url);
+function saveFile(content, fileName, type) {
+    const blob = new Blob([content], { type: type });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
 }
 
-// Start with one empty row
-addRow();
+document.getElementById("fileInput").addEventListener("change", function(e) {
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+        const workbook = XLSX.read(new Uint8Array(evt.target.result), { type: 'array' });
+        const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+        json.slice(1).forEach(r => r.length && addRow(r));
+    };
+    reader.readAsArrayBuffer(e.target.files[0]);
+});
