@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>GST Refine Tool</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<div class="header">
+    <h1>GST Refine Tool</h1>
+    <p>Upload • Validate • Refine • Export</p>
+</div>
+
+<div class="controls">
+    <input type="file" id="fileInput">
+    <button onclick="addRow()">Add Row</button>
+    <button onclick="downloadCSV()">Download CSV</button>
+    <button onclick="downloadJSON()">Download JSON</button>
+</div>
+
+<div class="table-container">
+    <table id="gstTable">
+        <thead>
+            <tr id="headerRow"></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<footer>Built by Mohd Irfan</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

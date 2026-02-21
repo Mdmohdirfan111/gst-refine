@@ -1,0 +1,82 @@
+body{
+    font-family: 'Segoe UI', sans-serif;
+    margin:0;
+    background: linear-gradient(135deg,#1e3c72,#2a5298);
+    color:#333;
+}
+
+.header{
+    text-align:center;
+    padding:20px;
+    color:white;
+}
+
+.controls{
+    text-align:center;
+    padding:15px;
+}
+
+button{
+    padding:10px 15px;
+    margin:5px;
+    border:none;
+    background:#00c853;
+    color:white;
+    font-weight:bold;
+    border-radius:6px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#00a844;
+}
+
+input[type="file"]{
+    padding:8px;
+    background:white;
+    border-radius:6px;
+}
+
+.table-container{
+    padding:15px;
+    overflow:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    border-radius:8px;
+    overflow:hidden;
+}
+
+th,td{
+    border:1px solid #ddd;
+    padding:6px;
+    font-size:12px;
+}
+
+th{
+    background:#2a5298;
+    color:white;
+    position:sticky;
+    top:0;
+}
+
+td input{
+    width:100%;
+    border:none;
+    outline:none;
+}
+
+.invalid{
+    background:#ffcccc;
+}
+
+footer{
+    text-align:center;
+    padding:15px;
+    color:white;
+    font-weight:bold;
+}
