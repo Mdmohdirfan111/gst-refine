@@ -1,48 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>GST Refine Tool 2025</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GST Refine Pro | GSTR-1 Ready</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
-<div class="header">
-    <h1>GST Refine Tool</h1>
-    <p>Upload Excel • Auto-Validate • Manual Edit • Export GSTR-1 JSON / CSV</p>
-</div>
+<div class="glass-container">
+    <div class="header">
+        <h1><i class="fas fa-file-invoice-dollar"></i> GST Refine Pro</h1>
+        <p>Smart Validation • GSTR-1 JSON Export • 3D Interface</p>
+    </div>
 
-<div class="controls">
-    <label class="file-label">
-        Upload GST Template
-        <input type="file" id="fileInput" accept=".xlsx,.xls">
-    </label>
-    
-    <button onclick="addRow()">+ Add New Row</button>
-    <button class="export-btn csv" onclick="downloadCSV()">Download CSV</button>
-    <button class="export-btn json" onclick="downloadGSTR1JSON()">Download GSTR-1 JSON</button>
-</div>
+    <div class="controls">
+        <div class="upload-wrapper">
+            <label for="fileInput" class="custom-file-upload">
+                <i class="fas fa-cloud-upload-alt"></i> Upload Excel
+            </label>
+            <input type="file" id="fileInput">
+        </div>
+        
+        <div class="button-group">
+            <button onclick="addRow()" class="btn-3d btn-add"><i class="fas fa-plus"></i> Add Row</button>
+            <button onclick="downloadCSV()" class="btn-3d btn-csv"><i class="fas fa-file-csv"></i> CSV</button>
+            <button onclick="downloadJSON()" class="btn-3d btn-json"><i class="fas fa-file-code"></i> GSTR-1 JSON</button>
+        </div>
+    </div>
 
-<div class="table-container">
-    <table id="gstTable">
-        <thead>
-            <tr id="headerRow"></tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</div>
+    <div class="table-container">
+        <table id="gstTable">
+            <thead>
+                <tr id="headerRow"></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 
-<div class="status-bar">
-    <span id="rowCount">0 rows</span>
-    <span> | Invalid rows will be highlighted in red</span>
+    <footer>
+        <p>Built with ❤️ by Mohd Irfan | <span id="year"></span></p>
+    </footer>
 </div>
-
-<footer>
-    Built with ❤️ by Mohd Irfan • Hyderabad
-</footer>
 
 <script src="script.js"></script>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
